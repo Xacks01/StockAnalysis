@@ -7843,6 +7843,17 @@ a.anchor-link {
 </div>
 </div>
 </div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Define-make_graph-Function">Define make_graph Function<a class="anchor-link" href="#Define-make_graph-Function">¶</a></h2>
+</div>
+</div>
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
@@ -7851,70 +7862,56 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In [2]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">make_graph</span><span class="p">(</span><span class="n">stock_data</span><span class="p">,</span> <span class="n">revenue_data</span><span class="p">,</span> <span class="n">stock_name</span><span class="p">):</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">make_graph</span><span class="p">(</span><span class="n">stock_data</span><span class="p">,</span> <span class="n">revenue_data</span><span class="p">,</span> <span class="n">stock</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Creates an interactive dashboard with two subplots:</span>
-<span class="sd">    1. Historical Share Price (top)</span>
-<span class="sd">    2. Historical Revenue (bottom)</span>
-<span class="sd">    Using Plotly on shared x-axes.</span>
+<span class="sd">    Standard plotting function for the IBM Capstone assignment.</span>
+<span class="sd">    For Tesla and GameStop, it filters stock data up to 2021-06-14 and revenue up to 2021-04-30</span>
+<span class="sd">    to match the rubric expectations. For other stocks (Amazon, AMD), it displays the full history.</span>
 <span class="sd">    """</span>
     <span class="n">fig</span> <span class="o">=</span> <span class="n">make_subplots</span><span class="p">(</span>
         <span class="n">rows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> 
         <span class="n">shared_xaxes</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
         <span class="n">subplot_titles</span><span class="o">=</span><span class="p">(</span><span class="s2">"Historical Share Price"</span><span class="p">,</span> <span class="s2">"Historical Revenue"</span><span class="p">),</span> 
-        <span class="n">vertical_spacing</span><span class="o">=</span><span class="mf">0.15</span>
+        <span class="n">vertical_spacing</span><span class="o">=</span><span class="mf">0.3</span>
     <span class="p">)</span>
     
-    <span class="c1"># 1. Share Price (Row 1)</span>
+    <span class="c1"># Apply date filters required by peer grading for Tesla and GameStop</span>
+    <span class="k">if</span> <span class="n">stock</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"Tesla"</span><span class="p">,</span> <span class="s2">"GameStop"</span><span class="p">]:</span>
+        <span class="n">stock_data_specific</span> <span class="o">=</span> <span class="n">stock_data</span><span class="p">[</span><span class="n">stock_data</span><span class="o">.</span><span class="n">Date</span> <span class="o">&lt;=</span> <span class="s1">'2021-06-14'</span><span class="p">]</span>
+        <span class="n">revenue_data_specific</span> <span class="o">=</span> <span class="n">revenue_data</span><span class="p">[</span><span class="n">revenue_data</span><span class="o">.</span><span class="n">Date</span> <span class="o">&lt;=</span> <span class="s1">'2021-04-30'</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">stock_data_specific</span> <span class="o">=</span> <span class="n">stock_data</span>
+        <span class="n">revenue_data_specific</span> <span class="o">=</span> <span class="n">revenue_data</span>
+        
     <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
         <span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
-            <span class="n">x</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">stock_data</span><span class="o">.</span><span class="n">Date</span><span class="p">),</span> 
-            <span class="n">y</span><span class="o">=</span><span class="n">stock_data</span><span class="o">.</span><span class="n">Close</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span> 
-            <span class="n">name</span><span class="o">=</span><span class="s2">"Share Price"</span><span class="p">,</span>
-            <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">"#1f77b4"</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-        <span class="p">),</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">stock_data_specific</span><span class="o">.</span><span class="n">Date</span><span class="p">,</span> <span class="n">infer_datetime_format</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> 
+            <span class="n">y</span><span class="o">=</span><span class="n">stock_data_specific</span><span class="o">.</span><span class="n">Close</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">"float"</span><span class="p">),</span> 
+            <span class="n">name</span><span class="o">=</span><span class="s2">"Share Price"</span>
+        <span class="p">),</span> 
         <span class="n">row</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span>
     <span class="p">)</span>
     
-    <span class="c1"># 2. Revenue (Row 2)</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
         <span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span>
-            <span class="n">x</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">revenue_data</span><span class="o">.</span><span class="n">Date</span><span class="p">),</span> 
-            <span class="n">y</span><span class="o">=</span><span class="n">revenue_data</span><span class="o">.</span><span class="n">Revenue</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span> 
-            <span class="n">name</span><span class="o">=</span><span class="s2">"Quarterly Revenue (Millions)"</span><span class="p">,</span>
-            <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">"#ff7f0e"</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-        <span class="p">),</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">revenue_data_specific</span><span class="o">.</span><span class="n">Date</span><span class="p">,</span> <span class="n">infer_datetime_format</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> 
+            <span class="n">y</span><span class="o">=</span><span class="n">revenue_data_specific</span><span class="o">.</span><span class="n">Revenue</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">"float"</span><span class="p">),</span> 
+            <span class="n">name</span><span class="o">=</span><span class="s2">"Revenue"</span>
+        <span class="p">),</span> 
         <span class="n">row</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span>
     <span class="p">)</span>
     
-    <span class="c1"># Update layout</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">update_xaxes</span><span class="p">(</span><span class="n">title_text</span><span class="o">=</span><span class="s2">"Date"</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">update_xaxes</span><span class="p">(</span><span class="n">title_text</span><span class="o">=</span><span class="s2">"Date"</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">update_yaxes</span><span class="p">(</span><span class="n">title_text</span><span class="o">=</span><span class="s2">"Price ($)"</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">update_yaxes</span><span class="p">(</span><span class="n">title_text</span><span class="o">=</span><span class="s2">"Revenue ($ Millions)"</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">update_yaxes</span><span class="p">(</span><span class="n">title_text</span><span class="o">=</span><span class="s2">"Price ($US)"</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">update_yaxes</span><span class="p">(</span><span class="n">title_text</span><span class="o">=</span><span class="s2">"Revenue ($US Millions)"</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     
     <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
-        <span class="n">title</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
-            <span class="n">text</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">stock_name</span><span class="si">}</span><span class="s2"> Stock and Revenue Dashboard"</span><span class="p">,</span>
-            <span class="n">x</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-            <span class="n">xanchor</span><span class="o">=</span><span class="s1">'center'</span><span class="p">,</span>
-            <span class="n">font</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"white"</span><span class="p">)</span>
-        <span class="p">),</span>
-        <span class="n">showlegend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">template</span><span class="o">=</span><span class="s2">"plotly_dark"</span><span class="p">,</span>
-        <span class="n">height</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span>
-        <span class="n">margin</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">40</span><span class="p">),</span>
-        <span class="n">legend</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
-            <span class="n">orientation</span><span class="o">=</span><span class="s2">"h"</span><span class="p">,</span>
-            <span class="n">yanchor</span><span class="o">=</span><span class="s2">"bottom"</span><span class="p">,</span>
-            <span class="n">y</span><span class="o">=</span><span class="mf">1.02</span><span class="p">,</span>
-            <span class="n">xanchor</span><span class="o">=</span><span class="s2">"right"</span><span class="p">,</span>
-            <span class="n">x</span><span class="o">=</span><span class="mi">1</span>
-        <span class="p">)</span>
+        <span class="n">showlegend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">height</span><span class="o">=</span><span class="mi">900</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="n">stock</span><span class="p">,</span>
+        <span class="n">xaxis_rangeslider_visible</span><span class="o">=</span><span class="kc">True</span>
     <span class="p">)</span>
-    
-    <span class="c1"># Add Range Slider to Row 1 x-axis</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">xaxis</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">rangeslider</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">visible</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="nb">type</span><span class="o">=</span><span class="s2">"date"</span><span class="p">))</span>
-    
     <span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -7928,7 +7925,7 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Section-1:-Tesla-Stock-and-Revenue-Data">Section 1: Tesla Stock and Revenue Data<a class="anchor-link" href="#Section-1:-Tesla-Stock-and-Revenue-Data">¶</a></h2>
+<h2 id="Question-1:-Use-yfinance-to-Extract-Tesla-Stock-Data">Question 1: Use yfinance to Extract Tesla Stock Data<a class="anchor-link" href="#Question-1:-Use-yfinance-to-Extract-Tesla-Stock-Data">¶</a></h2>
 </div>
 </div>
 </div>
@@ -8057,6 +8054,17 @@ a.anchor-link {
 </div>
 </div>
 </div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Question-2:-Use-Webscraping-to-Extract-Tesla-Revenue-Data">Question 2: Use Webscraping to Extract Tesla Revenue Data<a class="anchor-link" href="#Question-2:-Use-Webscraping-to-Extract-Tesla-Revenue-Data">¶</a></h2>
+</div>
+</div>
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
@@ -8166,30 +8174,6 @@ a.anchor-link {
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Plot Tesla Dashboard</span>
-<span class="n">make_graph</span><span class="p">(</span><span class="n">tesla_data</span><span class="p">,</span> <span class="n">tesla_revenue</span><span class="p">,</span> <span class="s2">"Tesla"</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-</div>
-</div>
-</div>
 </div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
@@ -8197,7 +8181,7 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Section-2:-GameStop-Stock-and-Revenue-Data">Section 2: GameStop Stock and Revenue Data<a class="anchor-link" href="#Section-2:-GameStop-Stock-and-Revenue-Data">¶</a></h2>
+<h2 id="Question-3:-Use-yfinance-to-Extract-GameStop-Stock-Data">Question 3: Use yfinance to Extract GameStop Stock Data<a class="anchor-link" href="#Question-3:-Use-yfinance-to-Extract-GameStop-Stock-Data">¶</a></h2>
 </div>
 </div>
 </div>
@@ -8206,7 +8190,7 @@ a.anchor-link {
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Create GME ticker object</span>
@@ -8233,7 +8217,7 @@ a.anchor-link {
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[6]:</div>
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[5]:</div>
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
 <div>
 <style scoped="">
@@ -8267,10 +8251,10 @@ a.anchor-link {
 <tr>
 <th>0</th>
 <td>2002-02-13</td>
-<td>1.620128</td>
-<td>1.693350</td>
-<td>1.603296</td>
-<td>1.691666</td>
+<td>1.620129</td>
+<td>1.693351</td>
+<td>1.603297</td>
+<td>1.691667</td>
 <td>76216000</td>
 <td>0.0</td>
 <td>0.0</td>
@@ -8326,12 +8310,23 @@ a.anchor-link {
 </div>
 </div>
 </div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Question-4:-Use-Webscraping-to-Extract-GameStop-Revenue-Data">Question 4: Use Webscraping to Extract GameStop Revenue Data<a class="anchor-link" href="#Question-4:-Use-Webscraping-to-Extract-GameStop-Revenue-Data">¶</a></h2>
+</div>
+</div>
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Fetch HTML content</span>
@@ -8378,7 +8373,7 @@ a.anchor-link {
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[7]:</div>
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[6]:</div>
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
 <div>
 <style scoped="">
@@ -8435,6 +8430,52 @@ a.anchor-link {
 </div>
 </div>
 </div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Question-5:-Plot-Tesla-Stock-Graph">Question 5: Plot Tesla Stock Graph<a class="anchor-link" href="#Question-5:-Plot-Tesla-Stock-Graph">¶</a></h2>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Plot Tesla Dashboard</span>
+<span class="n">make_graph</span><span class="p">(</span><span class="n">tesla_data</span><span class="p">,</span> <span class="n">tesla_revenue</span><span class="p">,</span> <span class="s2">"Tesla"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Question-6:-Plot-GameStop-Stock-Graph">Question 6: Plot GameStop Stock Graph<a class="anchor-link" href="#Question-6:-Plot-GameStop-Stock-Graph">¶</a></h2>
+</div>
+</div>
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
@@ -8466,7 +8507,7 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Section-3:-Amazon-Stock-and-Revenue-Data">Section 3: Amazon Stock and Revenue Data<a class="anchor-link" href="#Section-3:-Amazon-Stock-and-Revenue-Data">¶</a></h2>
+<h2 id="Section-7:-Amazon-Stock-and-Revenue-Data-(Additional-Analysis)">Section 7: Amazon Stock and Revenue Data (Additional Analysis)<a class="anchor-link" href="#Section-7:-Amazon-Stock-and-Revenue-Data-(Additional-Analysis)">¶</a></h2>
 </div>
 </div>
 </div>
@@ -8738,7 +8779,7 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Section-4:-AMD-Stock-and-Revenue-Data">Section 4: AMD Stock and Revenue Data<a class="anchor-link" href="#Section-4:-AMD-Stock-and-Revenue-Data">¶</a></h2>
+<h2 id="Section-8:-AMD-Stock-and-Revenue-Data-(Additional-Analysis)">Section 8: AMD Stock and Revenue Data (Additional Analysis)<a class="anchor-link" href="#Section-8:-AMD-Stock-and-Revenue-Data-(Additional-Analysis)">¶</a></h2>
 </div>
 </div>
 </div>
@@ -9014,7 +9055,7 @@ a.anchor-link {
 <li><strong>Tesla (TSLA)</strong> shows a strong long-term alignment between quarterly revenue growth and stock price appreciation. Revenue surged dramatically starting in 2020, aligned with an exponential rise in its share price.</li>
 <li><strong>Amazon (AMZN)</strong> exhibits exceptionally consistent revenue growth with recurring seasonal peaks in Q4 (due to holiday shopping). Stock performance tracks the revenue upward trend closely over the past decade.</li>
 <li><strong>AMD (AMD)</strong> displays cyclical semiconductor revenue patterns, showing periods of flat/dipping revenues followed by massive spikes corresponding to product release cycles (Ryzen/EPYC) and AI chip demand. The stock price behaves leading/coincident with these trends.</li>
-<li><strong>GameStop (GME)</strong> shows flat to declining quarterly revenues over the last 5-10 years. However, its stock price experienced a massive, unprecedented spike in early 2021. This indicates the 2021 price action was driven by market dynamics (retail short squeeze) rather than company revenue fundamentals.</li>
+<li><strong>GameStop (GME)</strong> displays flat to declining quarterly revenues over the last 5-10 years. However, its stock price experienced a massive, unprecedented spike in early 2021. This indicates the 2021 price action was driven by market dynamics (retail short squeeze) rather than company revenue fundamentals.</li>
 </ul>
 <h3 id="Insights-or-Next-Steps">Insights or Next Steps<a class="anchor-link" href="#Insights-or-Next-Steps">¶</a></h3><ul>
 <li>Quantify correlation: Perform a rolling Pearson correlation coefficient analysis between quarterly revenue growth and stock price movements to measure direct statistical coupling.</li>
